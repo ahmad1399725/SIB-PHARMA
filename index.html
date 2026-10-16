@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SehatNet</title>
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0b7a6e">
+<link rel="apple-touch-icon" href="/icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SehatNet">
+<style>
+:root{--g:#0b7a6e;--g2:#19b5a1;--bg:#eef4f3;--c:#fff;--t:#14312d;--m:#6a7f7c;--l:#e1ebe9;--r:#c0392b;--sh:0 4px 16px #0b3b3510}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1b1a;--c:#16282605;--t:#e6f2f0;--m:#8fa8a4;--l:#25403c}.card,.tile,input,select,textarea,#mdi,nav,.pc{background:#162826!important;color:var(--t)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--t);padding-bottom:150px}
+header{background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;box-shadow:0 2px 12px #0b7a6e55}
+header b{font-size:19px;letter-spacing:.3px}header small{font-weight:400;opacity:.8;font-size:11px}
+#av{width:36px;height:36px;border-radius:50%;background:#fff3;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;border:2px solid #fff6}
+main{padding:14px;max-width:680px;margin:auto;animation:f .25s}@keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.card{background:var(--c);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:var(--sh)}
+.hero{background:linear-gradient(135deg,#0b7a6e,#19b5a1 70%,#5eead4);color:#fff;border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:0 8px 24px #0b7a6e44}
+.hero .m{color:#d9fbf5}.warn{background:#fff4d6;color:#8a5a00}
+input,select,textarea{width:100%;padding:12px;margin:4px 0 9px;border:1.5px solid var(--l);border-radius:12px;font:inherit;background:#fff;color:var(--t);outline:none}input:focus,textarea:focus,select:focus{border-color:var(--g2)}
+button{background:var(--g);color:#fff;border:0;border-radius:12px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;transition:.15s}button:active{transform:scale(.96)}
+button.s{background:var(--l);color:var(--t)}button.d{background:var(--r)}button.w{width:100%;padding:13px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;border-top:1px solid var(--l);padding-bottom:env(safe-area-inset-bottom);z-index:6;overflow-x:auto;box-shadow:0 -4px 16px #0001}
+nav button{flex:1;min-width:62px;background:none;color:var(--m);border-radius:0;padding:8px 2px 7px;font-size:11px;font-weight:500}nav button span{display:block;font-size:21px;transition:.2s}nav button.on{color:var(--g)}nav button.on span{transform:translateY(-3px) scale(1.15)}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.big{font-size:22px;font-weight:800}.m{color:var(--m);font-size:13px}h3{margin:14px 2px 8px}
+.tag{border-radius:20px;padding:3px 10px;font-size:12px;background:var(--l);font-weight:600}.tag.ok{background:#d3f7e6;color:#0a6b3d}.tag.wa{background:#ffefc7;color:#8a5a00}.tag.bad{background:#fde0dc;color:#a52a1d}
+.tile{background:#fff;border-radius:16px;padding:12px 4px;text-align:center;box-shadow:var(--sh);font-size:12px;font-weight:600;cursor:pointer}.tile span{display:block;font-size:26px;margin-bottom:3px}
+.chips{display:flex;gap:7px;overflow-x:auto;margin:0 0 10px;padding-bottom:2px}.chips button{white-space:nowrap;background:#fff;color:var(--t);border-radius:22px;box-shadow:var(--sh);padding:8px 14px}.chips button.on{background:var(--g);color:#fff}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pc{background:#fff;border-radius:18px;overflow:hidden;box-shadow:var(--sh);position:relative}
+.pt{height:84px;display:flex;align-items:center;justify-content:center;font-size:44px}.pb{padding:10px}.pb b{font-size:14px;display:block;min-height:36px}
+.off{position:absolute;top:8px;left:8px;background:var(--r);color:#fff;border-radius:8px;padding:2px 7px;font-size:11px;font-weight:700}
+.qty{display:flex;align-items:center;justify-content:space-between;margin-top:6px}.qty button{padding:5px 13px;font-size:18px;border-radius:10px}
+#cb{position:fixed;bottom:66px;left:12px;right:12px;background:linear-gradient(135deg,#0f2b28,#16403b);color:#fff;border-radius:16px;padding:12px 16px;display:none;justify-content:space-between;align-items:center;z-index:6;box-shadow:0 8px 24px #0006}
+#md{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;z-index:9}#md>div{background:#fff;width:100%;max-width:680px;margin:auto;max-height:90vh;overflow:auto;border-radius:24px 24px 0 0;padding:18px;animation:f .2s}
+#toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:#14312d;color:#fff;padding:10px 18px;border-radius:24px;display:none;z-index:99;max-width:90%;box-shadow:0 6px 20px #0005}
+.bar{height:10px;background:#ffffff40;border-radius:9px;overflow:hidden;margin:8px 0 4px}.bar i{display:block;height:100%;background:#fff;border-radius:9px;transition:width .8s}
+.badge{display:inline-block;background:#fff3;border-radius:20px;padding:3px 12px;font-weight:700;font-size:13px}
+.steps{display:flex;align-items:center;margin:10px 0 2px}.steps i{width:12px;height:12px;border-radius:50%;background:var(--l)}.steps i.on{background:var(--g2)}.steps u{flex:1;height:3px;background:var(--l)}.steps u.on{background:var(--g2)}
+.ind{border-left:3px solid var(--g2)}.empty{text-align:center;color:var(--m);padding:30px 10px}.empty span{font-size:42px;display:block}
+.bars{display:flex;align-items:flex-end;gap:4px;height:100px}.bars div{flex:1;background:linear-gradient(var(--g2),var(--g));border-radius:5px 5px 0 0;min-height:3px}
+.rt{width:100%;border-collapse:collapse;font-size:13px}.rt th{background:var(--l);padding:7px;text-align:left;white-space:nowrap}.rt td{padding:7px;border-bottom:1px solid var(--l)}.rt td.n{text-align:right}.rt td.bad{color:var(--r);font-weight:700}
+#bell{position:relative;font-size:21px;margin-right:14px;cursor:pointer;display:none}#bc{position:absolute;top:-6px;right:-9px;background:#ef4444;color:#fff;border-radius:10px;font:700 10px/1 sans-serif;padding:3px 5px;font-style:normal;display:none}
+@media print{header,nav,#cb,button,.chips,#md{display:none!important}body{padding:0}}
+.pr{margin:2px 0}.g2c{color:var(--g)}.save{display:inline-block;background:#fff1e0;color:#d9480f;font-weight:700;font-size:12px;border-radius:6px;padding:2px 7px;margin:2px 0}
+.promo{background:linear-gradient(135deg,#ff7a18,#ff3d6e);color:#fff;border-radius:20px;padding:18px;margin-bottom:12px;position:relative;box-shadow:0 8px 22px #ff3d6e40}.promo .big{font-size:24px;max-width:70%}
+.pill2{position:absolute;right:12px;top:12px;background:#fff;color:#d9480f;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700}
+.cats{display:flex;gap:10px;overflow-x:auto;margin-bottom:6px;padding-bottom:4px}.cat{min-width:78px;text-align:center;font-size:12px;font-weight:600;background:#fff;border-radius:16px;padding:10px 6px;box-shadow:var(--sh);cursor:pointer}.cat span{display:block;font-size:28px}.cat.on{background:var(--g);color:#fff}
+.hrow{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px}.login-strip{background:#fff3cd;color:#7a5a00;border-radius:12px;padding:10px 14px;margin-bottom:10px;font-weight:600;cursor:pointer}
+.bar2{height:10px;background:var(--l);border-radius:8px;overflow:hidden;margin:8px 0}.bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--g2),var(--g));border-radius:8px}
+.center{text-align:center;margin-bottom:14px}.pill{display:inline-block;background:#fff;border-radius:26px;padding:10px 28px;font-size:22px;font-weight:800;color:#5b3fd1;box-shadow:var(--sh)}
+.big4{grid-template-columns:repeat(4,1fr)}@media(max-width:600px){.big4{grid-template-columns:repeat(2,1fr)}}
+.st{background:#fff;border-radius:16px;padding:16px 8px;text-align:center;box-shadow:var(--sh)}.st .ic{width:46px;height:46px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:22px}.st b{font-size:26px;display:block}.st small{color:var(--m)}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 8px;font-size:17px}.sec.red{color:#c0392b}
+.tblc{background:#fff;border-radius:14px;overflow-x:auto;box-shadow:var(--sh);border-left:4px solid #e74c3c}
+.boxes{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.boxes{grid-template-columns:1fr}}
+.box{border-radius:14px;overflow:hidden;border:1.5px solid}.box h4{margin:0;padding:12px 14px;font-size:16px}.box .r{display:flex;justify-content:space-between;padding:10px 14px;background:#fff;border-top:1px solid #0001;font-size:14px}
+.b1{border-color:#f5b17a}.b1 h4{background:#fff4ea;color:#b45309}.b2{border-color:#64d3c4}.b2 h4{background:#e7faf7;color:#0b7a6e}.b3{border-color:#b9a3f0}.b3 h4{background:#f3eeff;color:#5b3fd1}.b4{border-color:#f2d36b}.b4 h4{background:#fff9e0;color:#8a6d00}
+@media(min-width:900px){body.adm nav{top:58px;bottom:0;right:auto;width:225px;flex-direction:column;overflow-y:auto;border-top:0;border-right:1px solid var(--l);box-shadow:none;padding:10px 8px}
+body.adm nav button{display:flex;align-items:center;gap:10px;text-align:left;font-size:14px;padding:11px 12px;border-radius:10px;min-width:0;flex:none;margin-bottom:2px}body.adm nav button span{font-size:18px;display:inline;transform:none!important}body.adm nav button.on{background:#e8f6f4}
+body.adm main{margin-left:225px;max-width:none;padding:22px 30px}body.adm{padding-bottom:20px}body.adm #md>div{max-width:620px}}
+</style></head><body>
+<div id="toast"></div>
+<header><b>🌿 SehatNet <small>v5</small></b><div style="display:flex;align-items:center"><a id="invlink" href="/inventory" style="display:none;color:var(--g);font-weight:700;margin-right:14px;text-decoration:none;font-size:14px">🧾 Inventory</a><div id="bell" onclick="notifs()">🔔<i id="bc"></i></div><div id="av" onclick="profile()" style="display:none"></div></div></header>
+<main id="app"></main>
+<div id="cb"><span id="cbt"></span><button onclick="checkout()" style="background:#19b5a1">Checkout →</button></div>
+<nav id="nav"></nav><div id="md" onclick="if(event.target.id=='md')closeM()"><div id="mdi"></div></div>
+<script>
+let tok=localStorage.tok||"",adm=sessionStorage.adm||"",me=null,tab="home",at="dash",cart={},cat=[],q="",cf="all",amode="login",cfg={},lastN=-1;
+const $=s=>document.querySelector(s),v=id=>document.getElementById(id).value,rs=n=>"₹"+(+n||0).toLocaleString("en-IN",{maximumFractionDigits:2});
+const cls=s=>({delivered:"ok",approved:"ok",paid:"ok",awaiting_payment:"wa",requested:"wa",pending:"wa",returned:"bad",reversed:"bad",rejected:"bad",cancelled:"bad"})[s]||"";
+const lbl={awaiting_payment:"Payment baaki",paid:"Paid",delivered:"Delivered",returned:"Return",cancelled:"Cancel",requested:"Requested",approved:"Approved",pending:"Pending",rejected:"Rejected",reversed:"Wapas"};
+const tag=s=>`<span class="tag ${cls(s)}">${lbl[s]||s}</span>`;
+const PT={medicine:["💊","#dff3ff"],general:["🧴","#fff1cf"]},pt=c=>PT[c]||["📦","#ece6ff"];
+const when=t=>new Date(t*1000).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
+const empty=(e,t)=>`<div class="empty"><span>${e}</span>${t}</div>`;
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",3200)}
+async function api(m,p,b){const h={"Content-Type":"application/json"};if(tok)h["X-Token"]=tok;if(adm)h["X-Admin-Token"]=adm;
+ const r=await fetch(p,{method:m,headers:h,body:m=="GET"?undefined:JSON.stringify(b||{})});const j=await r.json();
+ if(!r.ok){if(r.status==401&&tok&&p!="/login")logout();toast(j.error||"Error");throw j}return j}
+const go=async f=>{try{await f()}catch(e){}};
+const openM=h=>{$("#mdi").innerHTML=h;$("#md").style.display="flex"},closeM=()=>$("#md").style.display="none";
+const load=async()=>cat=await fetch("/catalog").then(r=>r.json());
+async function boot(){if(tok&&!adm){try{me=await api("GET","/me")}catch(e){tok="";localStorage.tok="";me=null}}if(me&&me.role=="staff"){location.href="/inventory";return}await load();render()}
+function logout(){tok="";adm="";localStorage.tok="";sessionStorage.adm="";me=null;cart={};tab="home";closeM();render()}
+function render(){const a=$("#av");a.style.display=adm||me?"flex":"none";a.textContent=adm?"⚙️":me?me.name[0].toUpperCase():"";$("#cb").style.display="none";
+ $("#bell").style.display=me&&!adm?"block":"none";$("#invlink").style.display=adm?"inline":"none";if(me&&!adm){poll();offerPopup()}document.body.classList.toggle("adm",!!adm);if(adm)return adminShell();if(me)return userShell();guestShell()}
+
+/* AUTH */
+function authView(){guestNav();const ref=new URLSearchParams(location.search).get("ref")||"";if(ref)amode=amode=="login"&&!authView.s?"register":amode;authView.s=1;
+ const tabs=["login","register","admin"].map(x=>`<button class="${amode==x?"on":""}" onclick="amode='${x}';authView()">${{login:"🔑 Login",register:"✨ Naya account",admin:"⚙️ Admin"}[x]}</button>`).join("");
+ const f={login:`<input id="lp" placeholder="Phone number" inputmode="numeric"><input id="lk" type="password" placeholder="PIN"><button class="w" onclick="doLogin()">Login karein</button>`,
+ register:`<div class="m">Koi deposit ya joining fee nahi. Admin KYC dekhkar ID active karega.</div><br><input id="rn" placeholder="Poora naam"><input id="rp" placeholder="Phone number" inputmode="numeric"><input id="rk" placeholder="PAN / Aadhaar number"><input id="rk2" type="password" placeholder="PIN banayein (4+ digit)"><input id="rs" placeholder="Sponsor code" inputmode="numeric" value="${ref}"><textarea id="ra" placeholder="Pata"></textarea><label class="m" style="display:flex;gap:8px;align-items:center"><input id="rw" type="checkbox" style="width:auto" checked> WhatsApp par updates chahiye</label><br><button class="w" onclick="doReg()">Account banayein</button>`,
+ admin:`<input id="at" type="password" placeholder="Admin token"><button class="w" onclick="doAdmin()">Admin login</button>`}[amode];
+ $("#app").innerHTML=`<div class="hero" style="text-align:center"><div style="font-size:46px">🌿</div><div class="big">SehatNet</div><div class="m">Sasta saman, ghar baithe kamai</div></div><div class="chips">${tabs}</div><div class="card">${f}</div>`}
+const doLogin=()=>go(async()=>{tok=(await api("POST","/login",{phone:v("lp"),pin:v("lk")})).token;localStorage.tok=tok;await boot()});
+const doReg=()=>go(async()=>{const r=await api("POST","/register",{name:v("rn"),phone:v("rp"),kyc_id:v("rk"),pin:v("rk2"),sponsor_id:+v("rs")||null,address:v("ra"),wa_optin:$("#rw").checked});toast("Account ban gaya! ID "+r.user_id+". Ab login karein.");amode="login";authView()});
+const doAdmin=()=>go(async()=>{adm=v("at");sessionStorage.adm=adm;try{await api("GET","/admin/stats")}catch(e){adm="";sessionStorage.adm="";throw e}at="dash";render()});
+
+/* USER */
+const ut=()=>{const t=[["home","🏠","Home"],["shop","🛍️","Shop"],["orders","📦","Orders"],["team","👥","Team"],["wallet","💰","Wallet"]];if(me&&me.role!="customer")t.push(["stock","📒","Stock"]);return t};
+function nav(tabs,cur,fn){$("#nav").innerHTML=tabs.map(x=>`<button class="${x[0]==cur?"on":""}" onclick="${fn}('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join("")}
+const setTab=t=>{tab=t;userShell()};
+function userShell(){nav(ut(),tab,"setTab");({home:vHome,shop:vShop,orders:vOrders,team:vTeam,wallet:vWallet,stock:vStock})[tab]();cartBar()}
+const cn=()=>Object.values(cart).reduce((a,b)=>a+b,0),ctot=()=>cat.reduce((a,p)=>a+(cart[p.id]||0)*p.mrp*(1-p.discount_pct/100),0);
+function cartBar(){const sv=cat.reduce((a,p)=>a+(cart[p.id]||0)*p.mrp*p.discount_pct/100,0);$("#cb").style.display=cn()&&(me?tab=="shop":!adm&&gtab=="shop")?"flex":"none";$("#cbt").innerHTML=`🛒 ${cn()} item · <b>${rs(ctot())}</b>${sv>0?`<div style="font-size:11px;color:#7ef0d3">Aap bachayenge ${rs(sv)} 🎉</div>`:""}`}
+function share(){const u=location.origin+"/?ref="+me.id,t="SehatNet par sasta saman! Mera sponsor code: "+me.id;navigator.share?navigator.share({title:"SehatNet",text:t,url:u}).catch(()=>{}):navigator.clipboard.writeText(t+" "+u).then(()=>toast("Link copy ho gaya"))}
+const steps=s=>{const n={awaiting_payment:0,paid:1,delivered:2}[s];if(n===undefined)return"";return`<div class="steps"><i class="on"></i><u class="${n>=1?"on":""}"></u><i class="${n>=1?"on":""}"></i><u class="${n>=2?"on":""}"></u><i class="${n>=2?"on":""}"></i></div><div class="row m"><span>Order</span><span>Paid</span><span>Delivered</span></div>`};
+
+const nfmt=n=>(+n).toLocaleString("en-IN");
+const ladder=S=>`<div class="m" style="margin-bottom:8px">Level n: ${S.mult}ⁿ ID (har ID ${rs(S.base)} ka saman) ya utna business. Jo pehle ho, wahi level complete.</div>`+S.levels.map(x=>`<div class="card"><div class="row"><b>Level ${x.level}</b>${x.done?'<span class="tag ok">✅ Complete</span>':`<span class="tag wa">${x.pct}%</span>`}</div><div class="bar2"><i style="width:${x.pct}%"></i></div>
+<div class="m">👥 ID lagi: <b>${nfmt(x.qualified)}</b> / ${nfmt(x.target_people)} &nbsp;·&nbsp; 💼 Business: <b>${rs(x.volume)}</b> / ${rs(x.target_volume)}</div>${x.done?"":`<div class="m">Baaki: ${nfmt(Math.max(0,x.target_people-x.qualified))} ID ya ${rs(Math.max(0,x.target_volume-x.volume))} ka saman</div>`}</div>`).join("");
+const sc=(l,x)=>`<div class="card"><div class="m">${l}</div><div class="big" style="font-size:19px">${x}</div></div>`;
+async function vHome(){const[w,t,os,ofs]=await Promise.all([api("GET","/wallet/"+me.id),api("GET","/my/team"),api("GET","/my/orders"),fetch("/offers").then(r=>r.json())]);const nx=t.levels.find(x=>!x.done);
+ $("#app").innerHTML=(me.active?"":`<div class="card warn">⏳ <b>ID verify ho rahi hai.</b> Profile mein KYC photo daalein; admin approve karega tab order kar payenge.</div>`)+
+ `<div class="hero"><div class="row"><div><div class="m">Namaste 👋</div><div class="big">${me.name}</div></div><span class="badge">🏅 ${t.rank_name}</span></div>
+ <div class="bar"><i style="width:${nx?nx.pct:100}%"></i></div><div class="m">${nx?`Level ${nx.level}: ${nfmt(nx.qualified)}/${nfmt(nx.target_people)} ID · baaki ${nfmt(Math.max(0,nx.target_people-nx.qualified))} ID ya ${rs(Math.max(0,nx.target_volume-nx.volume))} ka saman`:"Sabhi levels complete 🎉"} · Code <b>${me.id}</b></div></div>
+ ${offerHtml(ofs)}<div class="g4"><div class="tile" onclick="setTab('shop')"><span>🛍️</span>Shop</div><div class="tile" onclick="setTab('orders')"><span>📦</span>Orders</div><div class="tile" onclick="share()"><span>📤</span>Invite</div><div class="tile" onclick="setTab('team')"><span>👥</span>Team</div></div>
+ <div class="g4"><div class="tile" onclick="support()"><span>💬</span>Support</div><div class="tile" onclick="setTab('wallet')"><span>💰</span>Wallet</div><div class="tile" onclick="notifs()"><span>🔔</span>Alerts</div>${me.role!="customer"?`<div class="tile" onclick="setTab('stock')"><span>📒</span>Stock</div>`:`<div class="tile" onclick="profile()"><span>👤</span>Profile</div>`}</div>
+ <h3>📈 Mera kaam</h3><div class="g">${sc("Nikalne layak",rs(w.available))}${sc("Saman credit",rs(w.goods_credit))}${sc("Direct ID",t.direct)}${sc("Poori team",t.team)}${sc("Team ki pehli khareed",rs(t.first_biz))}${sc("Team ka repurchase",rs(t.repeat_biz))}</div>
+ <h3>Recent orders</h3>`+(os.slice(0,3).map(o=>`<div class="card"><div class="row"><b>#${o.id} · ${rs(o.total)}</b>${tag(o.status)}</div>${steps(o.status)}</div>`).join("")||empty("🛒","Abhi koi order nahi. Shop se shuru karein!"))}
+
+const qb=(p,n)=>n?`<button class="s" onclick="qt(${p.id},-1)">−</button><b>${n}</b><button onclick="qt(${p.id},1)">+</button>`:`<button class="w" onclick="qt(${p.id},1)">+ Add</button>`;
+const pcard=p=>{const[e,bg]=pt(p.category),pr=p.mrp*(1-p.discount_pct/100);return`<div class="pc"><div class="pt" style="background:${p.image?`url(${p.image}) center/cover`:bg}">${p.image?"":e}</div>${p.discount_pct?`<span class="off">${p.discount_pct}% OFF</span>`:""}<div class="pb"><b>${p.name}</b>${p.rx?'<span class="tag wa">Rx</span>':""}<div class="pr"><span class="big g2c">${rs(pr)}</span> <s class="m">${rs(p.mrp)}</s></div>${p.discount_pct?`<div class="save">Bachat ${rs(p.mrp-pr)}</div>`:""}<div class="qty q${p.id}">${qb(p,cart[p.id]||0)}</div></div></div>`};
+async function vShop(){await load();const ofs=await fetch("/offers").then(r=>r.json()).catch(()=>[]),cs=["all",...new Set(cat.map(p=>p.category))],hot=[...cat].sort((a,b)=>b.discount_pct-a.discount_pct).slice(0,8);
+ $("#app").innerHTML=(me?"":`<div class="login-strip" onclick="gGo('login')">🔐 Login karein aur member price par kharidein →</div>`)+`<input id="sq" placeholder="🔍 Dawai, vitamins, saman khojein" value="${q}" oninput="q=this.value;shopList()">`+
+ `<div class="promo"><div class="big">${ofs[0]?ofs[0].title:"FLAT 50-70% OFF"}</div><div>${ofs[0]?ofs[0].body||"":"Medicines par MRP se bahut kam daam"}</div><span class="pill2">MRP se sasta ✔</span></div>`+
+ `<div class="cats">${cs.map(c=>`<div class="cat ${c==cf?"on":""}" onclick="cf='${c}';vShop()"><span>${c=="all"?"🛒":pt(c)[0]}</span>${c=="all"?"Sab":c}</div>`).join("")}</div>`+
+ (cf=="all"&&!q&&hot.length?`<h3>🔥 Hot Deals</h3><div class="hrow">${hot.map(p=>`<div style="min-width:165px">${pcard(p)}</div>`).join("")}</div><h3>Sabhi products</h3>`:"")+`<div id="sl" class="pg"></div>`;shopList()}
+function shopList(){const l=cat.filter(p=>(cf=="all"||p.category==cf)&&p.name.toLowerCase().includes(q.toLowerCase()));$("#sl").innerHTML=l.map(pcard).join("")||empty("🔍","Kuch nahi mila")}
+function qt(id,d){const p=cat.find(x=>x.id==id);cart[id]=Math.max(0,Math.min(p.stock,(cart[id]||0)+d));document.querySelectorAll(".q"+id).forEach(e=>e.innerHTML=qb(p,cart[id]));cartBar()}
+
+async function checkout(){if(!me){toast("Order ke liye pehle login karein");return gGo("login")}if(!me.active)return toast("Pehle ID verify hone dein");const t=await api("GET","/tree/"+me.id);const mem=t.filter(u=>u.level==1&&u.role=="customer"&&u.active);
+ const items=cat.filter(p=>cart[p.id]),rx=items.some(p=>p.rx);
+ openM(`<div class="big">🧾 Checkout</div><br>`+items.map(p=>`<div class="row"><span>${p.name} × ${cart[p.id]}</span><b>${rs(cart[p.id]*p.mrp*(1-p.discount_pct/100))}</b></div>`).join("")+
+ `<hr><div class="row"><b>Total</b><b class="big">${rs(ctot())}</b></div>`+(me.goods_credit>0?`<div class="m">💳 Aapka saman credit ${rs(me.goods_credit)} automatic lagega.</div>`:"")+`<br>`+
+ (mem.length?`<label class="m">Order kiske liye?</label><select id="cu"><option value="${me.id}">Khud ke liye</option>${mem.map(u=>`<option value="${u.id}">${u.name} (ID ${u.id})</option>`).join("")}</select>`:`<input type="hidden" id="cu" value="${me.id}">`)+
+ (rx?`<input id="rx" placeholder="💊 Prescription number (Rx dawai ke liye zaroori)">`:`<input type="hidden" id="rx">`)+
+ `<textarea id="dl" placeholder="Delivery pata">${me.address||""}</textarea><button class="s w" onclick="loc()">📍 Meri location lagayein</button><br><br><button class="w" onclick="placeOrder()">Order confirm karein</button>`)}
+function loc(){navigator.geolocation.getCurrentPosition(p=>{$("#dl").value+=`\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`},()=>toast("Location nahi mili"))}
+const placeOrder=()=>go(async()=>{const items=Object.entries(cart).filter(x=>x[1]>0).map(x=>({product_id:+x[0],qty:x[1]}));
+ const r=await api("POST","/orders",{user_id:+v("cu"),items,rx_ref:v("rx"),deliver_to:v("dl")});cart={};me=await api("GET","/me");await load();
+ openM(`<div style="text-align:center"><div style="font-size:50px">🎉</div><div class="big">Order #${r.order_id} ho gaya!</div><p class="m">Total ${rs(r.total)}${r.credit_used?` (credit ${rs(r.credit_used)})`:""}</p></div>${r.pay_via_upi>0?`<div class="card warn">UPI se <b>${rs(r.pay_via_upi)}</b> bhejein:<br><b style="font-size:18px">${me.upi_id}</b><br><span class="m">Admin payment dekhkar verify karega.</span></div>`:""}<button class="w" onclick="closeM();setTab('orders')">Orders dekhein</button>`)});
+
+async function vOrders(){const os=await api("GET","/my/orders");
+ $("#app").innerHTML=os.map(o=>`<div class="card"><div class="row" onclick="det(${o.id})"><b>#${o.id} · ${rs(o.total)}</b>${tag(o.status)}</div><div class="m">${when(o.created)} · cash ${rs(o.payable)} · credit ${rs(o.credit_used)}</div>${steps(o.status)}<div id="od${o.id}"></div></div>`).join("")||empty("📦","Abhi koi order nahi")}
+const det=id=>go(async()=>{const e=$("#od"+id);if(e.innerHTML){e.innerHTML="";return}const o=await api("GET","/orders/"+id);
+ e.innerHTML=`<hr>`+o.items.map(i=>`<div class="row m"><span>${i.name} × ${i.qty}</span><span>${rs(i.qty*i.unit_price)}</span></div>`).join("")+
+ (o.status=="awaiting_payment"?`<div class="card warn" style="margin-top:8px">UPI bhejein: <b>${me?.upi_id||""}</b> (${rs(o.payable)})</div>`:"")+(o.deliver_to?`<div class="m">📍 ${o.deliver_to}</div>`:"")+
+ (o.status=="delivered"?`<div class="m">Return 30 din tak. Saman credit milega, cash refund nahi.</div>`:"")+(["paid","delivered"].includes(o.status)?`<br><button class="s" onclick="invoice(${id})">🧾 Invoice / Bill</button>`:"")});
+const invoice=id=>go(async()=>{const o=await api("GET","/orders/"+id),g=+o.biz.gst_pct,base=g?o.total/(1+g/100):o.total;
+ const w=window.open("","_blank");if(!w)return toast("Popup allow karein");
+ w.document.write(`<html><head><meta name=viewport content="width=device-width"><title>Invoice ${id}</title><style>body{font:14px sans-serif;max-width:600px;margin:20px auto;padding:10px}table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px solid #ddd;text-align:left}.r{text-align:right}</style></head><body>
+ <h2>${o.biz.name}</h2>${o.biz.gstin?`<div>GSTIN: ${o.biz.gstin}</div>`:""}<h3>Invoice #${id}</h3><div>Date: ${new Date(o.created*1000).toLocaleDateString("en-IN")}</div>
+ <p><b>${o.buyer.name}</b><br>${o.buyer.phone||""}<br>${o.deliver_to||o.buyer.address||""}</p>
+ <table><tr><th>Item</th><th class=r>Qty</th><th class=r>Rate</th><th class=r>Amount</th></tr>${o.items.map(i=>`<tr><td>${i.name}</td><td class=r>${i.qty}</td><td class=r>₹${i.unit_price}</td><td class=r>₹${(i.qty*i.unit_price).toFixed(2)}</td></tr>`).join("")}</table>
+ ${g?`<p class=r>Taxable: ₹${base.toFixed(2)}<br>GST ${g}%: ₹${(o.total-base).toFixed(2)}</p>`:""}<h3 class=r>Total: ₹${o.total}</h3><p class=r>Credit use: ₹${o.credit_used} · Cash: ₹${o.payable}</p><p style="color:#888">Dhanyavaad! Return 30 din ke andar (saman credit).</p><script>setTimeout(()=>print(),300)<\/script></body></html>`);w.document.close()});
+
+async function vTeam(){const[t,tr]=await Promise.all([api("GET","/my/team"),api("GET","/tree/"+me.id)]);const roles=me.can_onboard;
+ $("#app").innerHTML=`<div class="hero"><div class="m">Aapka sponsor code</div><div class="big" style="font-size:34px">${me.id}</div><br><button class="s" onclick="share()">📤 Dosto ko invite karein</button></div>
+ <h3>📈 Mera kaam</h3><div class="g">${sc("Direct ID",t.direct)}${sc("Poori team (7 level)",t.team)}${sc("Pehli khareed (ID se)",rs(t.first_biz))}${sc("Repurchase",rs(t.repeat_biz))}${sc("Commission (approved)",rs(t.commission.approved))}${sc("Commission (pending)",rs(t.commission.pending))}${sc("Meri khud ki khareed",rs(t.my_purchase))}${sc("Meri dilayi bikri",rs(t.my_sales))}</div>
+ <h3>🪜 Level progress (${t.rank_name})</h3>${ladder(t)}
+ <div class="card"><b>➕ Naya member jodein</b><div class="m">Admin verify karega tab active hoga.</div><br><input id="tn" placeholder="Naam"><input id="tp" placeholder="Phone"><input id="tk" placeholder="PAN / Aadhaar"><input id="tpin" type="password" placeholder="PIN"><select id="tr">${roles.map(r=>`<option>${r}</option>`).join("")}</select><button class="w" onclick="addMem()">Jodein</button></div>
+ <h3>Meri team (${tr.length})</h3>`+(tr.map(u=>`<div class="card ind" style="margin-left:${(u.level-1)*14}px"><div class="row"><b>${u.name}</b>${u.active?`<span class="tag ok">active</span>`:`<span class="tag wa">verify baaki</span>`}</div><div class="m">${u.role} · ID ${u.id} · Level ${u.level}</div></div>`).join("")||empty("👥","Team abhi khali hai. Invite karein!"))}
+
+const addMem=()=>go(async()=>{const r=await api("POST","/register",{name:v("tn"),phone:v("tp"),kyc_id:v("tk"),pin:v("tpin"),role:v("tr"),sponsor_id:me.id});toast("Joda gaya. ID "+r.user_id);vTeam()});
+
+async function vWallet(){const[w,ws,cm]=await Promise.all([api("GET","/wallet/"+me.id),api("GET","/my/withdrawals"),api("GET","/my/commissions")]);
+ $("#app").innerHTML=`<div class="hero"><div class="m">Nikalne layak commission</div><div class="big" style="font-size:34px">${rs(w.available)}</div><div class="m">Pending ${rs(w.pending)} · Nikala ${rs(w.withdrawn)} · Saman credit ${rs(w.goods_credit)}</div></div>
+ <div class="card"><b>💸 Paisa nikalein</b><input id="wa" type="number" placeholder="Amount"><input id="wu" placeholder="Aapka UPI ID"><button class="w" onclick="wd()">Request bhejein</button></div>`+
+ (ws.length?`<h3>Withdrawals</h3>`+ws.map(x=>`<div class="card row"><span>${rs(x.amount)} → ${x.upi}</span>${tag(x.status)}</div>`).join(""):"")+
+ `<h3>Commission history</h3>`+(cm.map(x=>`<div class="card row"><div><b>${rs(x.amount)}</b><div class="m">Order #${x.order_id} · ${x.buyer} · Level ${x.level}</div></div>${tag(x.status)}</div>`).join("")||empty("💰","Abhi koi commission nahi"))}
+const wd=()=>go(async()=>{await api("POST","/withdraw",{amount:+v("wa"),upi:v("wu")});toast("Request bhej di");vWallet()});
+
+function profile(){if(adm)return openM(`<b>Admin</b><br><br><button class="d w" onclick="logout()">Logout</button>`);
+ openM(`<div class="big">👤 Meri profile</div><div class="m">ID ${me.id} · ${me.phone} · ${me.role} ${me.active?'<span class="tag ok">verified</span>':'<span class="tag wa">verify baaki</span>'}</div><br><input id="pn" value="${me.name}"><textarea id="pa">${me.address||""}</textarea><button class="w" onclick="saveP()">Save</button><hr>
+ <label class="m" style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" ${me.wa_optin?"checked":""} onchange="waOpt(this)"> WhatsApp par notifications chahiye</label><hr><b>📄 KYC photo (PAN/Aadhaar)</b><input type="file" accept="image/*" onchange="kycPick(this)"><hr><b>PIN badlein</b><input id="op" type="password" placeholder="Purana PIN"><input id="np" type="password" placeholder="Naya PIN"><button class="s w" onclick="savePin()">PIN badlein</button><br><br><button class="d w" onclick="logout()">Logout</button>`)}
+const saveP=()=>go(async()=>{await api("POST","/me/update",{name:v("pn"),address:v("pa")});me=await api("GET","/me");closeM();render();toast("Save ho gaya")});
+const savePin=()=>go(async()=>{await api("POST","/me/update",{old_pin:v("op"),new_pin:v("np")});closeM();toast("PIN badal gaya")});
+function kycPick(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const im=new Image();im.onload=()=>{const k=Math.min(1,900/Math.max(im.width,im.height)),cv=document.createElement("canvas");cv.width=im.width*k;cv.height=im.height*k;cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);go(async()=>{await api("POST","/me/kyc",{doc:cv.toDataURL("image/jpeg",.7)});toast("KYC photo upload ho gayi ✅")})};im.src=e.target.result};r.readAsDataURL(f)}
+
+/* ADMIN */
+const AT=[["dash","📊","Dashboard"],["orders","📦","Orders"],["prod","💊","Products"],["rep","📈","Reports"],["users","👥","Users"],["pay","💸","Payouts"],["offers","🎁","Offers"],["chat","💬","Chat"],["set","⚙️","Settings"]];
+const setAt=t=>{at=t;adminShell()};
+function adminShell(){nav(AT,at,"setAt");({dash:aDash,orders:aOrders,prod:aProd,users:aUsers,pay:aPay,rep:aRep,set:aSet,offers:aOffers,chat:aChat})[at]()}
+async function aOrders(){const os=await api("GET","/admin/orders");
+ const act=o=>({awaiting_payment:`<input id="u${o.id}" placeholder="UTR / payment ref"><button onclick="ao('pay',${o.id},{utr:v('u${o.id}')})">✔ Payment verify</button> <button class="d" onclick="ao('cancel',${o.id})">Cancel</button>`,paid:`<button onclick="ao('deliver',${o.id})">🚚 Delivered</button>`,delivered:`<button class="d" onclick="if(confirm('Return karein?'))ao('return',${o.id})">Return</button> <button class="s" onclick="invoice(${o.id})">🧾</button>`})[o.status]||"";
+ $("#app").innerHTML=os.map(o=>`<div class="card"><div class="row" onclick="adet(${o.id})"><b>#${o.id} · ${rs(o.payable)}</b>${tag(o.status)}</div><div class="m">User ${o.user_id}${o.seller_id?" · seller "+o.seller_id:""} · ${when(o.created)}</div><div id="od${o.id}"></div><br>${act(o)}</div>`).join("")||empty("📦","Koi order nahi")}
+const adet=id=>go(async()=>{const e=$("#od"+id);if(e.innerHTML){e.innerHTML="";return}const o=await api("GET","/orders/"+id);
+ e.innerHTML=`<hr>`+o.items.map(i=>`<div class="row m"><span>${i.name} × ${i.qty}</span><span>${rs(i.qty*i.unit_price)}</span></div>`).join("")+`<div class="m">👤 ${o.buyer.name} ${o.buyer.phone||""}<br>📍 ${o.deliver_to||"-"} ${o.rx_ref?"<br>💊 Rx: "+o.rx_ref:""} ${o.utr?"<br>UTR "+o.utr:""}</div>`});
+const ao=(a,id,b)=>go(async()=>{await api("POST",`/admin/orders/${id}/${a}`,b);toast("Ho gaya");aOrders()});
+async function aUsers(){const us=await api("GET","/admin/users");
+ $("#app").innerHTML=`<div class="card"><b>Franchise/Agent banayein (sponsor ke bina)</b><input id="fn" placeholder="Naam"><input id="fp" placeholder="Phone"><input id="fk" placeholder="KYC number"><input id="fpin" type="password" placeholder="PIN"><select id="fr"><option>franchise</option><option>agent</option></select><button class="w" onclick="addF()">Banayein</button></div>`+
+ us.map(u=>`<div class="card"><div class="row"><div><b>${u.name}</b> <span class="tag">${u.role}</span><div class="m">ID ${u.id} · ${u.phone} · sponsor ${u.sponsor_id||"-"}</div></div>${u.active?`<button class="s" onclick="ua(${u.id},0)">Block</button>`:`<button onclick="ua(${u.id},1)">✔ Verify</button>`}</div><br><button class="s" onclick="aTeam(${u.id})">👥 Team detail</button> <a class="tag" href="https://wa.me/91${u.phone}" target="_blank">💬 WhatsApp</a> ${u.has_kyc?`<br><button class="s" onclick="viewK(${u.id})">📄 KYC photo dekhein</button>`:`<div class="m">KYC photo nahi</div>`}</div>`).join("")}
+const viewK=id=>go(async()=>{const k=await api("GET",`/admin/users/${id}/kyc`);openM(`<b>${k.name}</b><div class="m">KYC no: ${k.kyc_id}</div><br><img src="${k.doc}" style="width:100%;border-radius:12px">`)});
+const ua=(id,a)=>go(async()=>{await api("POST",`/admin/users/${id}/active`,{active:a});aUsers()});
+const addF=()=>go(async()=>{const r=await api("POST","/register",{name:v("fn"),phone:v("fp"),kyc_id:v("fk"),pin:v("fpin"),role:v("fr")});toast("ID "+r.user_id);aUsers()});
+async function aPay(){const wl=await api("GET","/admin/withdrawals");
+ $("#app").innerHTML=wl.map(x=>`<div class="card"><div class="row"><b>${x.name}: ${rs(x.amount)}</b>${tag(x.status)}</div><div class="m">UPI: ${x.upi}</div>${x.status=="requested"?`<input id="w${x.id}" placeholder="Payment ref"><button onclick="wa_('pay',${x.id})">Paid ✔</button> <button class="d" onclick="wa_('reject',${x.id})">Reject</button>`:""}</div>`).join("")||empty("💸","Koi withdrawal nahi")}
+const wa_=(a,id)=>go(async()=>{await api("POST",`/admin/withdrawals/${id}/${a}`,{ref:($("#w"+id)||{}).value});aPay()});
+async function aSet(){const s=await api("GET","/admin/settings"),R=s.onboard_rules;const f=(k,l,h)=>`<label class="m">${l}</label><input id="st_${k}" value="${Array.isArray(s[k])?s[k].join(", "):s[k]}">${h?`<div class="m">${h}</div>`:""}`;
+ $("#app").innerHTML=`<div class="card"><b>🏢 Business</b>`+f("biz_name","Business naam (invoice par)")+f("gstin","GSTIN (khali chhod sakte hain)")+f("gst_pct","GST % (price mein shamil)")+f("upi_id","Aapka UPI ID (customer yahan pay karega)")+`</div>
+ <div class="card"><b>🎁 Commission</b>`+f("first_direct_pct","Pehle order par sponsor ko one-time %")+f("first_levels_pct","Pehle order 7-level % (comma se)")+f("repeat_levels_pct","Repeat order matching % (comma se)")+`</div>
+ <div class="card"><b>🏅 Rank</b>`+f("rank_names","Rank ke naam (comma se)","Member se shuru, upar tak")+f("level_base","Level ka base amount ₹ (ek ID = itne ka saman)","Level n ka target = 20ⁿ ID ya 20ⁿ × is amount ka business")+f("level_mult","Har level par multiplier (20)")+`</div>
+ <div class="card"><b>👥 Kaun kise jod sakta hai</b>`+["franchise","agent","customer"].map(r=>f("r_"+r,r+" jod sakta hai (comma se)").replace(`id="st_r_${r}" value="${s["r_"+r]}"`,`id="st_r_${r}" value="${R[r].join(", ")}"`)).join("")+`</div>
+ <div class="card"><b>🤖 Support</b>`+f("support_wa","Support WhatsApp number (91XXXXXXXXXX)")+f("ai_support","AI auto-reply (true/false)","Chalne ke liye server par ANTHROPIC_API_KEY chahiye")+`</div><div class="card"><b>⚙️ Anya</b>`+f("min_withdraw","Minimum withdrawal ₹")+f("return_days","Return window (din)")+`</div><button class="w" onclick="saveS()">💾 Save settings</button><br><br><button class="d w" onclick="logout()">Admin logout</button>`}
+const saveS=()=>go(async()=>{const a=k=>v("st_"+k).split(",").map(x=>+x.trim()),t=k=>v("st_"+k).split(",").map(x=>x.trim()).filter(Boolean);
+ await api("POST","/admin/settings",{biz_name:v("st_biz_name"),gstin:v("st_gstin"),gst_pct:+v("st_gst_pct"),upi_id:v("st_upi_id"),min_withdraw:+v("st_min_withdraw"),support_wa:v("st_support_wa"),ai_support:v("st_ai_support")!="false",return_days:+v("st_return_days"),first_direct_pct:+v("st_first_direct_pct"),first_levels_pct:a("first_levels_pct"),repeat_levels_pct:a("repeat_levels_pct"),level_base:+v("st_level_base"),level_mult:+v("st_level_mult"),rank_names:t("rank_names"),onboard_rules:{franchise:t("r_franchise"),agent:t("r_agent"),customer:t("r_customer")}});toast("Settings save ho gayi ✅")});
+
+
+/* ===== v4: alerts, offers, support, stock, reports ===== */
+const ago=t=>{const s=Date.now()/1e3-t;return s<60?"abhi":s<3600?Math.floor(s/60)+" min pehle":s<86400?Math.floor(s/3600)+" ghante pehle":when(t)};
+async function poll(){if(!me||adm)return;try{const r=await fetch("/my/notifications",{headers:{"X-Token":tok}});if(!r.ok)return;const j=await r.json(),prev=lastN;
+ $("#bc").textContent=j.unread;$("#bc").style.display=j.unread?"block":"none";
+ if(j.items.length){const mx=j.items[0].id;const fresh=j.items.filter(x=>!x.read&&x.id>prev);
+  if(prev>=0&&fresh.length){toast("🔔 "+fresh[0].title);if(window.Notification&&Notification.permission=="granted"&&navigator.serviceWorker)navigator.serviceWorker.ready.then(g=>g.showNotification(fresh[0].title,{body:fresh[0].body,icon:"/icon-192.png"}))}
+  lastN=Math.max(prev,mx)}else if(prev<0)lastN=0}catch(e){}}
+setInterval(poll,20000);
+async function notifs(){if(window.Notification&&Notification.permission=="default")Notification.requestPermission();const j=await api("GET","/my/notifications");
+ openM(`<div class="big">🔔 Notifications</div><br>`+(j.items.map(n=>`<div class="card" style="${n.read?"opacity:.65":""}"><b>${n.title}</b><div class="m">${n.body}</div><div class="m">${ago(n.created)}</div></div>`).join("")||empty("🔔","Abhi koi notification nahi")));
+ if(j.unread){await api("POST","/my/notifications/read");poll()}}
+const offerHtml=os=>os.length?`<div class="chips" style="gap:10px">${os.map(o=>`<div class="card" style="min-width:240px;margin:0;background:linear-gradient(135deg,#ff9a3c,#ff5e62);color:#fff"><b>🎁 ${o.title}</b><div style="font-size:13px">${o.body||""}</div></div>`).join("")}</div>`:"";
+async function offerPopup(){try{const o=await fetch("/offers").then(r=>r.json()),last=+(localStorage.lastOffer||0);
+ if(o.length&&o[0].id>last){localStorage.lastOffer=o[0].id;openM(`<div style="text-align:center"><div style="font-size:54px">🎁</div><div class="big">${o[0].title}</div><p>${o[0].body||""}</p><button class="w" onclick="closeM();setTab('shop')">Shop karein</button></div>`)}}catch(e){}}
+const waOpt=cb=>go(async()=>{await api("POST","/me/update",{wa_optin:cb.checked});me.wa_optin=cb.checked?1:0;toast(cb.checked?"WhatsApp updates on":"WhatsApp updates off")});
+
+const bubbles=(m,adminView)=>m.map(x=>{const mine=adminView?x.from_admin>0:x.from_admin==0;return`<div style="display:flex;justify-content:${mine?"flex-end":"flex-start"}"><div style="max-width:82%;margin:3px 0;padding:8px 12px;border-radius:14px;background:${mine?"var(--g)":"var(--l)"};color:${mine?"#fff":"var(--t)"}">${x.from_admin>=2?"🤖 ":""}${x.text}<div style="font-size:10px;opacity:.7">${ago(x.created)}</div></div></div>`}).join("")||empty("💬","Koi message nahi. Sawal poochhein!");
+async function support(){const m=await api("GET","/my/messages");
+ openM(`<div class="big">💬 Support</div><div class="m">AI assistant turant jawab dega; zaroorat par admin team dekhegi.</div><br><div style="max-height:45vh;overflow:auto">${bubbles(m,false)}</div><br><input id="cm" placeholder="Apna sawal likhein..."><button class="w" id="sb" onclick="sendMsg()">Bhejein</button>${me.support_wa?`<br><br><a href="https://wa.me/${me.support_wa}?text=${encodeURIComponent("Namaste, SehatNet ID "+me.id)}" target="_blank"><button class="s w">📱 WhatsApp par baat karein</button></a>`:""}`)}
+const sendMsg=()=>go(async()=>{const b=$("#sb");b.textContent="Jawab aa raha hai...";b.disabled=true;try{await api("POST","/my/messages",{text:v("cm")})}finally{}support()});
+
+async function vStock(){const s=await api("GET","/stock/mine");
+ $("#app").innerHTML=`<div class="hero"><div class="m">Mere stock ki keemat</div><div class="big" style="font-size:30px">${rs(s.summary.stock_value)}</div><div class="m">Kharida ${rs(s.summary.bought)} · Becha ${rs(s.summary.sold)} · Munafa ${rs(s.summary.profit)}</div></div>
+ <div class="g4" style="grid-template-columns:repeat(3,1fr)"><div class="tile" onclick="stockForm('purchase')"><span>➕</span>Khareed</div><div class="tile" onclick="stockForm('sale')"><span>💰</span>Bikri</div><div class="tile" onclick="stockForm('transfer')"><span>🔁</span>Team ko</div></div>
+ <h3>📊 Reports</h3>${repMenu("user")}<h3>Stock list</h3>`+(s.items.map(i=>`<div class="card row"><div><b>${i.name}</b><div class="m">Avg cost ${rs(i.avg_cost)} · MRP ${rs(i.mrp)}</div></div><div style="text-align:right"><div class="big">${i.qty}</div>${i.qty<=5?'<span class="tag bad">low</span>':""}</div></div>`).join("")||empty("📒","Stock khali hai. Khareed daalein."))+
+ `<h3>Hisaab (ledger)</h3>`+s.ledger.map(l=>`<div class="card row"><div><b>${{purchase:"Khareed",sale:"Bikri",transfer_in:"Team se mila",transfer_out:"Team ko diya"}[l.kind]}: ${l.name} × ${l.qty}</b><div class="m">${l.party||""} · ${when(l.created)}</div></div><b>${rs(l.qty*l.unit_price)}</b></div>`).join("")}
+async function stockForm(kind){const s=await api("GET","/stock/mine");const t=kind=="transfer"?(await api("GET","/tree/"+me.id)).filter(u=>u.level==1&&u.role!="customer"&&u.active):[];
+ const prods=kind=="purchase"?cat:cat.filter(p=>s.items.find(i=>i.product_id==p.id));
+ if(!prods.length)return toast(kind=="purchase"?"Catalog khali hai":"Stock mein koi item nahi");if(kind=="transfer"&&!t.length)return toast("Aapke neeche koi active agent/franchise nahi");
+ openM(`<div class="big">${{purchase:"➕ Khareed (stock mein jodein)",sale:"💰 Bikri (walk-in customer)",transfer:"🔁 Team member ko becha"}[kind]}</div><br>`+(kind=="transfer"?`<select id="sto">${t.map(u=>`<option value="${u.id}">${u.name} (ID ${u.id})</option>`).join("")}</select>`:"")+
+ `<select id="sp">${prods.map(p=>`<option value="${p.id}">${p.name}</option>`).join("")}</select><input id="sq2" type="number" placeholder="Quantity"><input id="su" type="number" placeholder="${kind=="purchase"?"Khareed rate (per piece)":"Becha rate (per piece)"}">`+
+ (kind=="purchase"?`<input id="sbn" placeholder="Batch number"><label class="m">Expiry date</label><input id="sex" type="date">`:"")+(kind!="transfer"?`<input id="spt" placeholder="${kind=="purchase"?"Kisse khareeda (supplier)":"Customer ka naam"}">`:"")+`<button class="w" onclick="stockSave('${kind}')">Save</button>`)}
+const stockSave=k=>go(async()=>{const b={product_id:+v("sp"),qty:+v("sq2"),unit_price:+v("su"),party:$("#spt")?v("spt"):""};if(k=="transfer")b.to_user_id=+v("sto");if(k=="purchase"){b.batch_no=v("sbn");b.expiry=v("sex")||null}
+ await api("POST","/stock/"+k,b);closeM();toast("Save ho gaya ✅");vStock()});
+
+/* reports */
+const AREP=[["pnl","💹","Profit & Loss",[7,30,90,0]],["sales","🛒","Sales",[7,30,90,0]],["product_sales","💊","Product sales",[30,90,0]],["purchases","📥","Purchase",[30,90,0]],["expiry","⏳","Expiry",[30,90,180]],["inventory","📒","Stock value",[]],["team_stock","🏬","Team stock",[]],["commission","🎁","Commission",[30,90,0]],["customers","🏆","Top customers",[30,90,0]],["returns","↩️","Returns",[30,90,0]],["team","🌳","Team & repurchase",[]],["users","👥","New users",[30,90,0]],["payouts","💸","Payouts",[30,90,0]]];
+const UREP=[["pnl","💹","Profit/Loss",[7,30,90,0]],["purchases","📥","Meri khareed",[30,90,0]],["sales","💰","Meri bikri",[30,90,0]],["expiry","⏳","Expiry",[30,90,180]],["stock","📒","Mera stock",[]],["commission","🎁","Commission",[30,90,0]]];
+const repMenu=sc=>`<div class="g4" style="grid-template-columns:repeat(3,1fr)">${(sc=="admin"?AREP:UREP).map(r=>`<div class="tile" onclick="showRep('${sc}','${r[0]}',${r[3][0]??0})"><span>${r[1]}</span>${r[2]}</div>`).join("")}</div>`;
+const repBack=sc=>sc=="admin"?aRep():vStock();
+const fmt=(l,x)=>typeof x!="number"?x:/%/.test(l)?x+"%":/qty|orders|items|users/i.test(l)?x:rs(x);
+async function showRep(sc,name,days){const meta=(sc=="admin"?AREP:UREP).find(x=>x[0]==name),r=await api("GET",`/${sc=="admin"?"admin":"my"}/reports/${name}/${days}`);window._rep=r;
+ $("#app").innerHTML=`<div class="row"><button class="s" onclick="repBack('${sc}')">← Reports</button><b>${r.title}</b></div><br>`+(meta[3].length?`<div class="chips">${meta[3].map(d=>`<button class="${d==days?"on":""}" onclick="showRep('${sc}','${name}',${d})">${d?d+" din":"Sab"}</button>`).join("")}</div>`:"")+
+ (r.summary.length?`<div class="g">${r.summary.map(s=>`<div class="card"><div class="m">${s[0]}</div><div class="big" style="font-size:18px">${fmt(s[0],s[1])}</div></div>`).join("")}</div>`:"")+
+ `<div class="card" style="overflow-x:auto;padding:6px"><table class="rt"><tr>${r.columns.map(c=>`<th>${c}</th>`).join("")}</tr>${r.rows.map(x=>`<tr>${x.map(c=>`<td class="${typeof c=="number"?"n":""}${/^(EXPIRED|LOW)$/.test(c)?" bad":""}">${c??""}</td>`).join("")}</tr>`).join("")||`<tr><td colspan="${r.columns.length}" class="m">Koi data nahi</td></tr>`}</table></div><div class="g"><button onclick="repCsv()">⬇ CSV</button><button class="s" onclick="window.print()">🖨 Print</button></div>`}
+const repCsv=()=>{const r=window._rep;dl([r.columns,...r.rows].map(x=>x.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(",")).join("\n"))};
+function dl(t){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));a.download="report.csv";a.click()}
+async function aRep(){const s=await api("GET","/admin/stats");$("#app").innerHTML=`<div class="hero"><div class="m">📈 Reports</div><div class="big">Sales ${rs(s.sales)}</div><div class="m">Kisi bhi report par tap karein. CSV aur print bhi milega.</div></div>`+repMenu("admin")}
+
+/* admin: products/purchase/supply, offers, chat */
+function rsz(f,max,qual,cb){const r=new FileReader();r.onload=e=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),cv=document.createElement("canvas");cv.width=im.width*k;cv.height=im.height*k;cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);cb(cv.toDataURL("image/jpeg",qual))};im.src=e.target.result};r.readAsDataURL(f)}
+async function aProd(){const[ps,us]=await Promise.all([api("GET","/admin/products"),api("GET","/admin/users")]);const st=us.filter(u=>u.role!="customer"),po=ps.map(p=>`<option value="${p.id}">${p.name}</option>`).join("");
+ $("#app").innerHTML=`<div class="card"><b>➕ Naya product</b><input id="pn" placeholder="Naam"><select id="pc"><option>medicine</option><option>general</option></select><div class="g"><input id="pm" placeholder="MRP" type="number"><input id="pd" placeholder="Discount %" type="number"><input id="ps" placeholder="Opening stock" type="number"><input id="pcost" placeholder="Cost price" type="number"></div><select id="px"><option value="0">Normal</option><option value="1">Rx (prescription)</option></select><label class="m">📷 Photo (optional)</label><input id="pimg" type="file" accept="image/*"><button class="w" onclick="addP()">Add</button></div>
+ <div class="card"><b>📥 Purchase (supplier se maal aaya)</b><select id="pu_p">${po}</select><div class="g"><input id="pu_q" type="number" placeholder="Qty"><input id="pu_r" type="number" placeholder="Cost/piece"></div><input id="pu_b" placeholder="Batch no."><label class="m">Expiry date</label><input id="pu_e" type="date"><input id="pu_s" placeholder="Supplier"><button class="w" onclick="addPur()">Purchase save karein</button></div>
+ <div class="card"><b>🔁 Franchise/Agent ko stock becha</b><select id="sx_u">${st.map(u=>`<option value="${u.id}">${u.name} (${u.role}, ID ${u.id})</option>`).join("")}</select><select id="sx_p">${po}</select><div class="g"><input id="sx_q" type="number" placeholder="Qty"><input id="sx_r" type="number" placeholder="Becha rate"></div><button class="w" onclick="supply()">Stock bhejein</button></div>`+
+ ps.map(p=>`<div class="card"><div class="row"><b>${pt(p.category)[0]} ${p.name}</b>${p.active?'<span class="tag ok">live</span>':'<span class="tag bad">off</span>'}</div>${p.image?`<img src="${p.image}" style="height:60px;border-radius:8px;margin:6px 0">`:""}
+ <div class="g"><div><div class="m">MRP</div><input id="m${p.id}" type="number" value="${p.mrp}"></div><div><div class="m">Discount %</div><input id="d${p.id}" type="number" value="${p.discount_pct}"></div><div><div class="m">Stock</div><input id="s${p.id}" type="number" value="${p.stock}"></div><div><div class="m">Cost</div><input id="c${p.id}" type="number" value="${p.cost||0}"></div></div>
+ <select id="a${p.id}"><option value="1" ${p.active?"selected":""}>Live</option><option value="0" ${p.active?"":"selected"}>Off</option></select><label class="m">📷 Photo badlein</label><input type="file" accept="image/*" onchange="pimg(${p.id},this)"><button class="s w" onclick="editP(${p.id})">Save</button></div>`).join("")}
+const addP=()=>{const f=$("#pimg").files[0],b={name:v("pn"),category:v("pc"),mrp:+v("pm"),discount_pct:+v("pd"),stock:+v("ps"),cost:+v("pcost"),rx:+v("px")},send=()=>go(async()=>{await api("POST","/admin/products",b);toast("Add ho gaya");await load();aProd()});f?rsz(f,400,.6,d=>{b.image=d;send()}):send()};
+const pimg=(id,i)=>i.files[0]&&rsz(i.files[0],400,.6,d=>go(async()=>{await api("PATCH","/admin/products/"+id,{image:d});toast("Photo lag gayi");aProd()}));
+const editP=id=>go(async()=>{await api("PATCH","/admin/products/"+id,{mrp:+v("m"+id),discount_pct:+v("d"+id),stock:+v("s"+id),cost:+v("c"+id),active:+v("a"+id)});toast("Save ho gaya");await load()});
+const addPur=()=>go(async()=>{await api("POST","/admin/purchase",{product_id:+v("pu_p"),qty:+v("pu_q"),unit_price:+v("pu_r"),batch_no:v("pu_b"),expiry:v("pu_e")||null,party:v("pu_s")});toast("Purchase save ho gaya ✅");aProd()});
+const supply=()=>go(async()=>{await api("POST","/admin/stock/supply",{user_id:+v("sx_u"),product_id:+v("sx_p"),qty:+v("sx_q"),unit_price:+v("sx_r")});toast("Stock bhej diya ✅");aProd()});
+async function aOffers(){const o=await api("GET","/offers");
+ $("#app").innerHTML=`<div class="card"><b>🎁 Naya offer</b><input id="ot" placeholder="Offer title (jaise: Diwali 10% extra)"><textarea id="ob" placeholder="Details"></textarea><label class="m" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="on" checked style="width:auto"> Sabko notification (aur WhatsApp) bhejein</label><br><button class="w" onclick="addO()">Offer lagayein</button></div>
+ <div class="card"><b>📣 Broadcast message</b><input id="bt" placeholder="Title"><textarea id="bb" placeholder="Message"></textarea><select id="br"><option value="">Sab users</option><option>customer</option><option>agent</option><option>franchise</option></select><button class="w" onclick="bcast()">Bhejein</button></div><h3>Chal rahe offers</h3>`+(o.map(x=>`<div class="card row"><div><b>${x.title}</b><div class="m">${x.body||""}</div></div><button class="d" onclick="delO(${x.id})">Hatayein</button></div>`).join("")||empty("🎁","Koi offer nahi"))}
+const addO=()=>go(async()=>{await api("POST","/admin/offers",{title:v("ot"),body:v("ob"),notify:$("#on").checked});toast("Offer lag gaya");aOffers()});
+const delO=id=>go(async()=>{await api("POST",`/admin/offers/${id}/delete`);aOffers()});
+const bcast=()=>go(async()=>{const r=await api("POST","/admin/broadcast",{title:v("bt"),body:v("bb"),role:v("br")});toast(r.sent+" logon ko bheja")});
+async function aChat(){const t=await api("GET","/admin/messages");
+ $("#app").innerHTML=t.map(x=>`<div class="card row" onclick="aThread(${x.user_id})"><div><b>${x.name}</b> ${x.from_admin==3?'<span class="tag bad">⚠️ Human chahiye</span>':x.from_admin==0?'<span class="tag wa">naya</span>':""}<div class="m">${x.from_admin>=2?"🤖 ":x.from_admin?"Aap: ":""}${x.text}</div></div><span class="m">${ago(x.created)}</span></div>`).join("")||empty("💬","Koi message nahi")}
+const aThread=uid=>go(async()=>{const m=await api("GET","/admin/messages/"+uid);openM(`<div class="big">💬 User ${uid}</div><br><div style="max-height:45vh;overflow:auto">${bubbles(m,true)}</div><br><input id="ar" placeholder="Jawab likhein..."><button class="w" onclick="aReply(${uid})">Bhejein</button>`)});
+const aReply=uid=>go(async()=>{await api("POST","/admin/messages/"+uid,{text:v("ar")});aThread(uid)});
+
+async function aDash(){const d=await api("GET","/admin/dashboard");
+ const st=(i,l,n,bg)=>`<div class="st"><div class="ic" style="background:${bg}">${i}</div><b>${n}</b><small>${l}</small></div>`,row=(l,v)=>`<div class="r"><span>${l}</span><b>${v}</b></div>`,
+ tbl=(cols,rows)=>`<table class="rt"><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr>${rows||`<tr><td colspan="${cols.length}" class="m">Koi data nahi</td></tr>`}</table>`,mx=Math.max(1,...d.categories.map(x=>x.amount));
+ $("#app").innerHTML=`<div class="center"><span class="pill">Total Business Count</span></div><div class="g4 big4">${st("👥","Users",d.counts.total,"#ede9fe")}${st("🏬","Franchise",d.counts.franchise||0,"#e0f2fe")}${st("🧑‍💼","Agents",d.counts.agent||0,"#d1fae5")}${st("🛍️","Customers",d.counts.customer||0,"#fef3c7")}${st("📦","Orders",d.orders.total,"#fee2e2")}${st("💊","Products",d.products,"#fce7f3")}${st("⚠️","Low stock",d.stock.low,"#ffedd5")}${st("⏳","Expiry (30 din)",d.stock.expiring,"#ede9fe")}</div>
+ <div class="sec red"><b>⚠️ Payment verify baaki <span class="tag bad">${d.orders.awaiting}</span></b><a href="#" onclick="setAt('orders');return false" style="color:#5b3fd1;font-size:13px">View All →</a></div>
+ <div class="tblc">${tbl(["Order","Customer","Mobile","Amount","Din"],d.pending.map(p=>`<tr><td>#${p.id}</td><td>${p.name}</td><td>${p.phone}</td><td class="n">${rs(p.payable)}</td><td class="n bad">${p.days}</td></tr>`).join(""))}</div>
+ <div class="boxes" style="margin-top:16px"><div class="box b1"><h4>🛒 Sales</h4>${row("Aaj",rs(d.sales.today))}${row("Pichhle 30 din",rs(d.sales.month))}${row("Total",rs(d.sales.total))}</div>
+ <div class="box b2"><h4>🔁 Business: ID vs Repurchase</h4>${row("Pehli khareed (ID)",rs(d.business.first))}${row("Repurchase",rs(d.business.repeat))}${row("Total",rs(d.business.total))}</div>
+ <div class="box b3"><h4>🎁 Commission</h4>${row("Approved",rs(d.commission.approved))}${row("Pending",rs(d.commission.pending))}${row("Reversed",rs(d.commission.reversed))}</div>
+ <div class="box b4"><h4>📒 Stock</h4>${row("Stock value (cost)",rs(d.stock.value))}${row("Low stock items",d.stock.low)}${row("Expiry 30 din",d.stock.expiring)}</div></div>
+ <div class="sec"><b>🏆 Top team leaders</b><a href="#" onclick="at='rep';adminShell();showRep('admin','team',0);return false" style="color:#5b3fd1;font-size:13px">Poori list →</a></div>
+ <div class="tblc" style="border-left-color:#5b3fd1">${tbl(["Naam","Role","Rank","Direct","Team","Pehli ₹","Repurchase ₹"],d.leaders.map(l=>`<tr onclick="aTeam(${l.id})" style="cursor:pointer"><td>${l.name}</td><td>${l.role}</td><td>${l.rank}</td><td class="n">${l.direct}</td><td class="n">${l.team}</td><td class="n">${rs(l.first_biz)}</td><td class="n">${rs(l.repeat_biz)}</td></tr>`).join(""))}</div>
+ <div class="sec"><b>📊 Business distribution</b></div><div class="card">${d.categories.map(x=>`<div class="row m" style="margin:6px 0"><span style="width:90px">${x.name}</span><div style="flex:1;background:var(--l);border-radius:6px;height:12px"><div style="width:${x.amount/mx*100}%;height:100%;border-radius:6px;background:var(--g2)"></div></div><b>${rs(x.amount)}</b></div>`).join("")||empty("📊","Abhi sales nahi")}</div>`}
+const aTeam=uid=>go(async()=>{const t=await api("GET","/admin/team/"+uid);openM(`<div class="big">${t.user.name}</div><div class="m">${t.user.role} · ID ${uid} · ${t.user.phone} · 🏅 ${t.rank_name}</div><br><div class="g">${sc("Direct ID",t.direct)}${sc("Poori team",t.team)}${sc("Pehli khareed (ID)",rs(t.first_biz))}${sc("Repurchase",rs(t.repeat_biz))}${sc("Commission approved",rs(t.commission.approved))}${sc("Commission pending",rs(t.commission.pending))}${sc("Khud ki khareed",rs(t.my_purchase))}${sc("Dilayi bikri",rs(t.my_sales))}</div><h3>Level progress</h3>${ladder(t)}`)});
+let gtab="shop";
+function guestNav(){$("#nav").innerHTML=[["shop","🛍️","Shop"],["login","🔑","Login"],["reg","✨","Join"]].map(x=>`<button class="${(x[0]=="shop"?gtab=="shop":gtab=="auth"&&(x[0]=="reg"?amode=="register":amode!="register"))?"on":""}" onclick="gGo('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join("")}
+function gGo(t){if(t=="shop")gtab="shop";else{gtab="auth";amode=t=="reg"?"register":"login"}guestShell()}
+function guestShell(){guestNav();if(gtab=="shop"){vShop();cartBar()}else authView()}
+
+boot();if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js");
+</script></body></html>

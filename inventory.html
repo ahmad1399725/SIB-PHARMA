@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SehatNet Inventory</title><meta name="theme-color" content="#ffffff">
+<style>
+:root{--g:#0f766e;--l:#e6ecee;--t:#16302d;--m:#6a7f7c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#fff;color:var(--t);padding-bottom:40px}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--l);position:sticky;top:0;background:#fff;z-index:5}
+header b{font-size:18px;color:var(--g)}main{max-width:720px;margin:auto;padding:14px}
+.card{background:#fff;border:1px solid var(--l);border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 1px 3px #0b3b350d}
+input,select,textarea{width:100%;padding:11px;margin:4px 0 8px;border:1.5px solid var(--l);border-radius:10px;font:inherit;background:#fff;color:var(--t);outline:none}input:focus,select:focus,textarea:focus{border-color:var(--g)}
+button{background:var(--g);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}button:active{transform:scale(.97)}
+button.s{background:#eef3f4;color:var(--t)}button.d{background:#c0392b}button.w{width:100%;padding:13px}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between}.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.big{font-size:20px;font-weight:800}.m{color:var(--m);font-size:13px}.tag{border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700;background:#eef3f4}
+.bb{border:0;border-radius:18px;padding:22px 8px;font-size:17px;color:#fff;text-align:center;font-weight:700;box-shadow:0 4px 14px #0001}.bb span{display:block;font-size:34px;margin-bottom:4px}
+.lt{background:#f5f8f9;color:var(--t);border:1px solid var(--l);box-shadow:none}
+.chips{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px}.chips button{white-space:nowrap;background:#eef3f4;color:var(--t);border-radius:20px}.chips button.on{background:var(--g);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:13px}th{background:#f1f5f6;text-align:left;padding:7px;white-space:nowrap}td{padding:7px;border-bottom:1px solid var(--l)}td.n{text-align:right}
+#md{position:fixed;inset:0;background:#0007;display:none;align-items:flex-end;z-index:9}#md>div{background:#fff;width:100%;max-width:720px;margin:auto;max-height:90vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px}
+#toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:#14312d;color:#fff;padding:10px 18px;border-radius:24px;display:none;z-index:99;max-width:90%}
+@media print{header,button,.chips,#md{display:none!important}}
+</style></head><body>
+<header><b>🧾 SehatNet Inventory</b><span><span id="who" class="m"></span> <button class="s" id="lo" style="display:none" onclick="logout()">Logout</button></span></header>
+<main id="app"></main><div id="toast"></div><div id="md" onclick="if(event.target.id=='md')closeM()"><div id="mdi"></div></div>
+<script>
+let tok=localStorage.tok||"",adm=sessionStorage.adm||"",me=null,PRODS=[],PARTS=[],BF=null,LF={k:"all",d:30},LM="staff";
+const $=s=>document.querySelector(s),v=id=>document.getElementById(id).value,rs=n=>"₹"+(+n||0).toLocaleString("en-IN",{maximumFractionDigits:2});
+const dt=t=>new Date(t*1000).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"2-digit",hour:"2-digit",minute:"2-digit",hour12:true});
+const KN={sale:"Sale",purchase:"Purchase",sale_return:"Sale Return",purchase_return:"Purchase Return"},KC={sale:"#0f766e",purchase:"#2563eb",sale_return:"#d97706",purchase_return:"#7c3aed"};
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",3000)}
+async function api(m,p,b){const h={"Content-Type":"application/json"};if(tok)h["X-Token"]=tok;if(adm)h["X-Admin-Token"]=adm;
+ const r=await fetch(p,{method:m,headers:h,body:m=="GET"?undefined:JSON.stringify(b||{})});const j=await r.json();if(!r.ok){toast(j.error||"Error");throw j}return j}
+const go=async f=>{try{await f()}catch(e){}};
+const openM=h=>{$("#mdi").innerHTML=h;$("#md").style.display="flex"},closeM=()=>$("#md").style.display="none";
+const loadRefs=async()=>{[PRODS,PARTS]=await Promise.all([api("GET","/admin/products"),api("GET","/admin/parties")])};
+const back=`<button class="s" onclick="home()">← Home</button> `;
+
+async function boot(){
+ if(adm){try{await api("GET","/admin/stats");return home()}catch(e){adm="";sessionStorage.adm=""}}
+ if(tok){try{me=await api("GET","/me");if(me.role=="staff")return home()}catch(e){}tok="";localStorage.tok=""}
+ loginView()}
+function logout(){tok="";adm="";me=null;localStorage.tok="";sessionStorage.adm="";loginView()}
+function loginView(){$("#who").textContent="";$("#lo").style.display="none";
+ $("#app").innerHTML=`<div class="card" style="text-align:center"><div style="font-size:42px">🧾</div><div class="big">Inventory & Billing</div><div class="m">Sirf Admin aur Staff ke liye</div></div>
+ <div class="chips"><button class="${LM=="staff"?"on":""}" onclick="LM='staff';loginView()">👤 Staff login</button><button class="${LM=="admin"?"on":""}" onclick="LM='admin';loginView()">⚙️ Admin</button></div><div class="card">`+
+ (LM=="staff"?`<input id="lp" placeholder="Phone" inputmode="numeric"><input id="lk" type="password" placeholder="PIN"><button class="w" onclick="doStaff()">Login</button>`:`<input id="at" type="password" placeholder="Admin token"><button class="w" onclick="doAdm()">Admin login</button>`)+`</div>`}
+const doStaff=()=>go(async()=>{tok=(await api("POST","/login",{phone:v("lp"),pin:v("lk")})).token;me=await api("GET","/me");if(me.role!="staff"){tok="";me=null;return toast("Ye staff ID nahi hai")}localStorage.tok=tok;home()});
+const doAdm=()=>go(async()=>{adm=v("at");sessionStorage.adm=adm;try{await api("GET","/admin/stats")}catch(e){adm="";sessionStorage.adm="";throw e}home()});
+
+function home(){BF=null;$("#who").textContent=adm?"Admin":me.name;$("#lo").style.display="inline";
+ const b=(k,i,t)=>`<button class="bb" style="background:${KC[k]}" onclick="billForm('${k}')"><span>${i}</span>${t}</button>`,l=(i,t,f)=>`<button class="bb lt" onclick="${f}"><span>${i}</span>${t}</button>`;
+ $("#app").innerHTML=`<div class="g">${b("sale","🧾","Sale")}${b("purchase","📥","Purchase")}${b("sale_return","↩️","Sale Return")}${b("purchase_return","↪️","Purchase Return")}</div><br>
+ <div class="g">${l("👥","Party-wise Sell","report('party_sales',30)")}${l("📅","Date-wise Sell","report('date_sales',30)")}</div><br>
+ <div class="g">${l("📚","Bills","billsView()")}${l("📦","Items / Stock","itemsView()")}</div>${adm?`<br>${l("👤","Staff (login banayein)","staffView()")}`:""}`}
+
+/* ---------- bill form ---------- */
+async function billForm(kind,bill){await loadRefs();if(!BF||BF.kind!=kind||bill)BF=bill||{kind,id:null,rows:[{}],date:today(),party:"",pname:"",disc:0,gst:0,paid:0,note:"",bno:""};bfDraw()}
+function bfSync(){if(!$("#bd"))return;BF.date=v("bd");BF.bno=v("bn");BF.party=v("bp");BF.pname=v("bpn");BF.note=v("bnote");BF.disc=+v("bdis")||0;BF.gst=+v("bg")||0;BF.paid=+v("bpaid")||0}
+const rowH=(r,i,pur)=>`<div class="card" style="padding:10px"><input list="pl" placeholder="Item naam likhein..." value="${r.name||""}" onchange="rowItem(${i},this.value)"><div class="g"><input type="number" placeholder="Qty" value="${r.qty||""}" oninput="BF.rows[${i}].qty=+this.value;bfTot()"><input type="number" placeholder="Rate ₹" value="${r.rate??""}" oninput="BF.rows[${i}].rate=+this.value;bfTot()"></div>${pur?`<div class="g"><input type="date" value="${r.expiry||""}" onchange="BF.rows[${i}].expiry=this.value"><input placeholder="Batch no." value="${r.batch_no||""}" oninput="BF.rows[${i}].batch_no=this.value"></div>`:""}<button class="s" onclick="bfSync();BF.rows.splice(${i},1);if(!BF.rows.length)BF.rows=[{}];bfDraw()">✖ hatayein</button></div>`;
+function bfDraw(){bfSync();const k=BF.kind,pur=k=="purchase",got=k=="sale"||k=="purchase_return";
+ $("#app").innerHTML=`${back}<b style="color:${KC[k]};font-size:19px">${BF.id?"✏️ Edit · ":""}${KN[k]} Bill</b><br><br><datalist id="pl">${PRODS.map(p=>`<option value="${p.name}">`).join("")}</datalist>
+ <div class="card"><div class="g"><div><div class="m">Date</div><input type="date" id="bd" value="${BF.date}"></div><div><div class="m">Bill no. (khali = auto)</div><input id="bn" value="${BF.bno||""}"></div></div>
+ <div class="m">Party</div><select id="bp"><option value="">Walk-in / Cash</option>${PARTS.map(p=>`<option value="${p.id}" ${BF.party==p.id?"selected":""}>${p.name}</option>`).join("")}</select><input id="bpn" placeholder="Walk-in naam (optional)" value="${BF.pname||""}"><button class="s" onclick="newParty()">➕ Nayi party jodein</button></div>
+ ${BF.rows.map((r,i)=>rowH(r,i,pur)).join("")}<button class="s w" onclick="bfSync();BF.rows.push({});bfDraw()">➕ Item jodein</button><br><br>
+ <div class="card"><div class="g"><div><div class="m">Discount ₹</div><input id="bdis" type="number" value="${BF.disc||0}" oninput="bfTot()"></div><div><div class="m">GST %</div><input id="bg" type="number" value="${BF.gst||0}" oninput="bfTot()"></div></div>
+ <div class="row"><b>Total</b><b class="big" id="btot"></b></div><div class="m">${got?"Paisa mila (₹)":"Paisa diya (₹)"}</div><input id="bpaid" type="number" value="${BF.paid||0}" oninput="bfTot()"><div class="m" id="bdue"></div>
+ <input id="bnote" placeholder="Note" value="${BF.note||""}"><button class="w" style="background:${KC[k]}" onclick="bfSave()">💾 Save ${KN[k]} bill</button></div>`;bfTot()}
+function rowItem(i,name){const p=PRODS.find(x=>x.name.toLowerCase()==name.trim().toLowerCase()),r=BF.rows[i];
+ if(!p){toast("Item list mein nahi mila");r.product_id=null;r.name=name;return}
+ r.product_id=p.id;r.name=p.name;r.qty=r.qty||1;r.rate=(BF.kind=="purchase"||BF.kind=="purchase_return")?(p.cost||0):+(p.mrp*(1-p.discount_pct/100)).toFixed(2);bfDraw()}
+function bfTot(){const sub=BF.rows.reduce((a,r)=>a+(r.qty||0)*(r.rate||0),0),d=+v("bdis")||0,g=+v("bg")||0,t=(sub-d)*(1+g/100),pd=+v("bpaid")||0;$("#btot").textContent=rs(t);$("#bdue").textContent="Baaki: "+rs(t-pd)}
+const newParty=()=>{bfSync();openM(`<div class="big">➕ Nayi party</div><br><input id="pn" placeholder="Naam"><input id="pp" placeholder="Phone"><select id="pt"><option value="both">Customer + Supplier</option><option value="customer">Customer</option><option value="supplier">Supplier</option></select><button class="w" onclick="saveParty()">Save</button>`)};
+const saveParty=()=>go(async()=>{const r=await api("POST","/admin/parties",{name:v("pn"),phone:v("pp"),ptype:v("pt")});closeM();await loadRefs();BF.party=r.party_id;bfDraw();toast("Party jud gayi")});
+const bfSave=()=>go(async()=>{bfSync();const rows=BF.rows.filter(r=>r.product_id&&r.qty>0);if(!rows.length)return toast("Kam se kam ek item daalein");
+ const body={kind:BF.kind,party_id:+BF.party||null,party_name:BF.pname,date:BF.date,bill_no:BF.bno,discount:BF.disc,gst_pct:BF.gst,paid:BF.paid,note:BF.note,items:rows.map(r=>({product_id:r.product_id,qty:r.qty,rate:r.rate,expiry:r.expiry||null,batch_no:r.batch_no||""}))};
+ const r=BF.id?await api("POST",`/admin/bills/${BF.id}/edit`,body):await api("POST","/admin/bills",body),id=r.bill_id,k=BF.kind;BF=null;
+ openM(`<div style="text-align:center"><div style="font-size:46px">✅</div><div class="big">Bill save ho gaya</div><div class="m">Total ${rs(r.total)}</div></div><br><button class="w" onclick="printBill(${id})">🖨 Print / PDF</button><br><br><button class="s w" onclick="closeM();billForm('${k}')">➕ Naya ${KN[k]} bill</button><br><br><button class="s w" onclick="closeM();home()">🏠 Home</button>`)});
+const printBill=id=>go(async()=>{const b=await api("GET","/admin/bill/"+id),w=window.open("","_blank");if(!w)return toast("Popup allow karein");
+ w.document.write(`<html><head><meta name=viewport content="width=device-width"><title>${b.bill_no}</title><style>body{font:14px sans-serif;max-width:620px;margin:20px auto;padding:10px}table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px solid #ddd;text-align:left}.r{text-align:right}</style></head><body>
+ <h2>${b.biz.name}</h2>${b.biz.gstin?`<div>GSTIN: ${b.biz.gstin}</div>`:""}<h3>${(b.kind||"").replace("_"," ").toUpperCase()} · ${b.bill_no}</h3><div>Date: ${new Date(b.ts*1000).toLocaleString("en-IN")}</div><p><b>${b.party_name}</b>${b.party?`<br>${b.party.phone||""}<br>${b.party.address||""}`:""}</p>
+ <table><tr><th>Item</th><th class=r>Qty</th><th class=r>Rate</th><th class=r>Amount</th></tr>${b.items.map(i=>`<tr><td>${i.name}${i.batch_no?` <small>(${i.batch_no}${i.expiry?" exp "+i.expiry:""})</small>`:""}</td><td class=r>${i.qty}</td><td class=r>₹${i.rate}</td><td class=r>₹${i.amount}</td></tr>`).join("")}</table>
+ <p class=r>Subtotal ₹${b.subtotal}${b.discount?`<br>Discount −₹${b.discount}`:""}${b.gst_pct?`<br>GST ${b.gst_pct}%`:""}</p><h3 class=r>Total: ₹${b.total}</h3><p class=r>Paid ₹${b.paid} · Baaki ₹${(b.total-b.paid).toFixed(2)}</p><p style="color:#888">Entry: ${b.by_name}</p><script>setTimeout(()=>print(),300)<\/script></body></html>`);w.document.close()});
+
+/* ---------- bills list ---------- */
+async function billsView(){const k=LF.k,d=LF.d,bs=await api("GET",`/admin/bills/${k}/${d}`);
+ $("#app").innerHTML=`${back}<b class="big">📚 Bills</b><br><br><div class="chips">${[["all","Sab"],["sale","Sale"],["purchase","Purchase"],["sale_return","Sale Return"],["purchase_return","Purchase Return"]].map(x=>`<button class="${k==x[0]?"on":""}" onclick="LF.k='${x[0]}';billsView()">${x[1]}</button>`).join("")}</div>
+ <div class="chips">${[[7,"7 din"],[30,"30 din"],[90,"90 din"],[0,"Sab"]].map(x=>`<button class="${d==x[0]?"on":""}" onclick="LF.d=${x[0]};billsView()">${x[1]}</button>`).join("")}</div>`+
+ (bs.map(b=>`<div class="card" style="border-left:5px solid ${KC[b.kind]}"><div class="row"><b>${b.bill_no}</b><span class="tag" style="color:${KC[b.kind]}">${KN[b.kind]}</span></div><div class="m">${dt(b.ts)} · ${b.party_name}</div>
+ <div class="row"><b class="big">${rs(b.total)}</b><span class="m">Paid ${rs(b.paid)} · Baaki ${rs(b.total-b.paid)}</span></div><div class="m">Entry: ${b.by_name}</div>
+ <div class="row"><button class="s" onclick="printBill(${b.id})">🖨 View / Print</button>${adm?`<span><button class="s" onclick="editBill(${b.id})">✏️ Edit</button> <button class="d" onclick="delBill(${b.id})">🗑</button></span>`:""}</div></div>`).join("")||`<div class="m" style="text-align:center;padding:30px">Koi bill nahi</div>`)}
+const editBill=id=>go(async()=>{const b=await api("GET","/admin/bill/"+id);await loadRefs();const d=new Date(b.ts*1000);
+ BF={kind:b.kind,id,rows:b.items.map(i=>({product_id:i.product_id,name:i.name,qty:i.qty,rate:i.rate,expiry:i.expiry,batch_no:i.batch_no})),date:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"),party:b.party_id||"",pname:b.party_id?"":b.party_name,disc:b.discount,gst:b.gst_pct,paid:b.paid,note:b.note||"",bno:b.bill_no};bfDraw()});
+const delBill=id=>{if(confirm("Ye bill hata dein? Stock wapas ho jayega."))go(async()=>{await api("POST",`/admin/bills/${id}/delete`);toast("Bill hata diya");billsView()})};
+
+/* ---------- reports ---------- */
+async function report(name,d){const r=await api("GET",`/admin/reports/${name}/${d}`);window._r=r;
+ $("#app").innerHTML=`${back}<b class="big">${name=="party_sales"?"👥":"📅"} ${r.title}</b><br><br><div class="chips">${[[7,"7 din"],[30,"30 din"],[90,"90 din"],[0,"Sab"]].map(x=>`<button class="${d==x[0]?"on":""}" onclick="report('${name}',${x[0]})">${x[1]}</button>`).join("")}</div>
+ <div class="g">${r.summary.map(s=>`<div class="card"><div class="m">${s[0]}</div><div class="big">${rs(s[1])}</div></div>`).join("")}</div>
+ <div class="card" style="overflow-x:auto;padding:6px"><table><tr>${r.columns.map(c=>`<th>${c}</th>`).join("")}</tr>${r.rows.map(x=>`<tr>${x.map(c=>`<td class="${typeof c=="number"?"n":""}">${c??""}</td>`).join("")}</tr>`).join("")||`<tr><td colspan="${r.columns.length}" class="m">Koi data nahi</td></tr>`}</table></div>
+ <div class="g"><button onclick="csv()">⬇ CSV download</button><button class="s" onclick="window.print()">🖨 Print</button></div>`}
+const csv=()=>{const r=window._r,t=[r.columns,...r.rows].map(x=>x.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));a.download="report.csv";a.click()};
+
+/* ---------- items ---------- */
+async function itemsView(){await loadRefs();$("#app").innerHTML=`${back}<b class="big">📦 Items / Stock</b><br><br><input id="iq" placeholder="🔍 Item khojein" oninput="itemList()"><div class="g"><button onclick="itemForm()">➕ Naya item</button><button class="s" onclick="bulkForm()">📥 Bulk add</button></div><br><div id="il"></div>`;itemList()}
+function itemList(){const q=(v("iq")||"").toLowerCase();$("#il").innerHTML=PRODS.filter(p=>p.name.toLowerCase().includes(q)).map(p=>`<div class="card row"><div><b>${p.name}</b><div class="m">${p.category} · MRP ${rs(p.mrp)} · ${p.discount_pct}% off · cost ${rs(p.cost)}</div></div><div style="text-align:right"><div class="big">${p.stock}</div>${adm?`<button class="s" onclick="itemForm(${p.id})">✏️</button> <button class="d" onclick="delItem(${p.id})">🗑</button>`:""}</div></div>`).join("")||`<div class="m">Koi item nahi</div>`}
+function itemForm(id){const p=id?PRODS.find(x=>x.id==id):{name:"",category:"medicine",mrp:"",discount_pct:0,cost:"",stock:0,rx:0};
+ openM(`<div class="big">${id?"✏️ Item edit":"➕ Naya item"}</div><br><input id="in" placeholder="Item naam" value="${p.name}"><select id="ic"><option ${p.category=="medicine"?"selected":""}>medicine</option><option ${p.category=="general"?"selected":""}>general</option></select><div class="g"><input id="im" type="number" placeholder="MRP" value="${p.mrp}"><input id="id" type="number" placeholder="Discount %" value="${p.discount_pct}"><input id="ico" type="number" placeholder="Cost price" value="${p.cost||""}">${id?"":`<input id="is" type="number" placeholder="Opening stock">`}</div><button class="w" onclick="saveItem(${id||0})">Save</button>`)}
+const saveItem=id=>go(async()=>{const b={name:v("in"),category:v("ic"),mrp:+v("im"),discount_pct:+v("id"),cost:+v("ico")};
+ if(id)await api("PATCH","/admin/products/"+id,b);else await api("POST","/admin/products/bulk",{rows:[{...b,stock:+v("is")||0}]});closeM();toast("Save ho gaya");itemsView()});
+const delItem=id=>{if(confirm("Item hata dein?"))go(async()=>{await api("POST",`/admin/products/${id}/delete`);toast("Hata diya");itemsView()})};
+const bulkForm=()=>openM(`<div class="big">📥 Bulk add</div><div class="m">Har line mein: naam, category, MRP, discount%, stock, cost, rx(0/1). Excel se copy-paste ya CSV file.</div><br><textarea id="bt" rows="7" placeholder="Paracetamol 500,medicine,30,50,100,10,0\nHerbal Soap,general,100,20,50,40,0"></textarea><input type="file" accept=".csv,.txt" onchange="bulkFile(this)"><button class="w" onclick="bulkSave()">Items jodein</button>`);
+const bulkFile=i=>{const f=i.files[0];if(f)f.text().then(t=>$("#bt").value=t)};
+const bulkSave=()=>go(async()=>{const rows=v("bt").split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(l=>l.split(/[,\t]/).map(x=>x.trim())).filter((x,i)=>!(i==0&&/name|naam|item/i.test(x[0]))).map(x=>({name:x[0],category:x[1],mrp:x[2],discount_pct:x[3],stock:x[4],cost:x[5],rx:x[6]}));
+ const r=await api("POST","/admin/products/bulk",{rows});closeM();toast(`${r.added} item jude, ${r.skipped} pehle se the${r.errors.length?`, ${r.errors.length} galat`:""}`);itemsView()});
+
+/* ---------- staff (admin only) ---------- */
+async function staffView(){const st=await api("GET","/admin/staff");
+ $("#app").innerHTML=`${back}<b class="big">👤 Staff</b><br><br><div class="card"><b>➕ Naya staff</b><div class="m">Staff bill bana sakta hai, items add kar sakta hai aur reports dekh sakta hai. Edit/delete sirf admin kar sakta hai.</div><br><input id="sn" placeholder="Naam"><input id="sp" placeholder="Phone (login ke liye)" inputmode="numeric"><input id="sk" type="password" placeholder="PIN (4+ digit)"><button class="w" onclick="addStaff()">Staff banayein</button></div>`+
+ st.map(x=>`<div class="card"><div class="row"><div><b>${x.name}</b><div class="m">${x.phone}</div></div>${x.active?'<span class="tag" style="background:#d3f7e6;color:#0a6b3d">chalu</span>':'<span class="tag" style="background:#fde0dc;color:#a52a1d">band</span>'}</div><br><button class="s" onclick="stAct(${x.id},${x.active?0:1})">${x.active?"⏸ Band karein":"▶ Chalu karein"}</button> <button class="s" onclick="stPin(${x.id})">🔑 PIN badlein</button> <button class="d" onclick="stDel(${x.id})">🗑</button></div>`).join("")}
+const addStaff=()=>go(async()=>{await api("POST","/admin/staff",{name:v("sn"),phone:v("sp"),pin:v("sk")});toast("Staff ban gaya");staffView()});
+const stAct=(id,a)=>go(async()=>{await api("POST",`/admin/staff/${id}/edit`,{active:a});staffView()});
+const stPin=id=>{const p=prompt("Naya PIN (4+ digit):");if(p)go(async()=>{await api("POST",`/admin/staff/${id}/edit`,{new_pin:p});toast("PIN badal gaya")})};
+const stDel=id=>{if(confirm("Staff hata dein?"))go(async()=>{await api("POST",`/admin/staff/${id}/delete`);staffView()})};
+boot();
+</script></body></html>
